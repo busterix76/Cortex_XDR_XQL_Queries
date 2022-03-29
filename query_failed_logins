@@ -1,16 +1,24 @@
+//Failed_Logins
+
 preset = xdr_event_log 
 | filter action_evtlog_event_id = 4625 
-| alter User_Name =arrayindex(regextract(action_evtlog_data_fields, "TargetUserName\":??\"([[:alpha:]]*)"),0)
-| alter Host_Name =arrayindex(regextract(action_evtlog_data_fields, "WorkstationName\":??\"([[:ascii:]]*)\",\"Transmitted"),0)
-| alter Domain_Name =arrayindex(regextract(action_evtlog_data_fields, "TargetDomainName\":??\"([[:alpha:]]*)"),0)
-| alter Logon_Type =arrayindex(regextract(action_evtlog_data_fields, "LogonType\":??\"([[:digit:]]*)"),0)
-| alter Failure_Reason =arrayindex(regextract(action_evtlog_data_fields, "FailureReason\":??\"([[:ascii:]]*)\",\"SubStatus"),0) 
-| alter Source_IP =arrayindex(regextract(action_evtlog_data_fields, "IpAddress\":??\"([[:ascii:]]*)\",\"IpPort"),0)
-| alter Caller_Process_Name =arrayindex(regextract(action_evtlog_data_fields, "\"ProcessName\":??\"([[:ascii:]]*)\",\"IpAddress"),0)
-| alter Failure_Reason = replace(Failure_Reason,"%%2309","The specified account's password has expired")
+| alter User_Name =arrayindex(regextract(action_evtlog_data_fields, "TargetUserName\":??\"([[:ascii:]]*?)\""),0)
+| alter Host_Name =arrayindex(regextract(action_evtlog_data_fields, "WorkstationName\":??\"([[:ascii:]]*?)\""),0)
+| alter Domain_Name =arrayindex(regextract(action_evtlog_data_fields, "TargetDomainName\":??\"([[:ascii:]]*?)\""),0)
+| alter Logon_Type =arrayindex(regextract(action_evtlog_data_fields, "LogonType\":??\"([[:ascii:]]*?)\""),0)
+| alter Failure_Reason =arrayindex(regextract(action_evtlog_data_fields, "FailureReason\":??\"([[:ascii:]]*?)\""),0) 
+| alter Source_IP =arrayindex(regextract(action_evtlog_data_fields, "IpAddress\":??\"([[:ascii:]]*?)\""),0)
+| alter Caller_Process_Name =arrayindex(regextract(action_evtlog_data_fields, "\"ProcessName\":??\"([[:ascii:]]*?)\""),0)
+| alter Failure_Reason = replace(Failure_Reason,"%%2304","An Error occured during Logon.")
 | alter Failure_Reason = replace(Failure_Reason,"%%2305","The specified user account has expired")
+| alter Failure_Reason = replace(Failure_Reason,"%%2306","The NetLogon component is not active.")
+| alter Failure_Reason = replace(Failure_Reason,"%%2307","Account locked out.")
+| alter Failure_Reason = replace(Failure_Reason,"%%2308","The user has not been granted the requested logon type at this machine.")
+| alter Failure_Reason = replace(Failure_Reason,"%%2309","The specified account's password has expired")
 | alter Failure_Reason = replace(Failure_Reason,"%%2310","Account currently disabled")
 | alter Failure_Reason = replace(Failure_Reason,"%%2311","Account logon time restriction violation")
 | alter Failure_Reason = replace(Failure_Reason,"%%2312","User not allowed to logon at this computer")
 | alter Failure_Reason = replace(Failure_Reason,"%%2313","Unknown user name or bad password")
+| alter Failure_Reason = replace(Failure_Reason,"%%2314","Domain sid inconsistent.")
+| alter Failure_Reason = replace(Failure_Reason,"%%2315","Smartcard logon is required and was not used.")
 | fields User_Name, Host_Name, Domain_Name, Logon_Type, Failure_Reason, Source_IP, Caller_Process_Name 
