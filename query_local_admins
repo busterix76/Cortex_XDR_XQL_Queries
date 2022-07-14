@@ -1,0 +1,10 @@
+config case_sensitive = false
+
+|dataset = host_users_to_groups    
+| filter group_name contains "admin"
+|filter user_name not contains "Administra"
+|filter user_name not contains "poe"
+| filter agent_type = ENUM.AGENT_TYPE_WORKSTATION 
+|fields host_name , agent_domain , user_name 
+|dedup host_name , user_name 
+|sort asc user_name 
