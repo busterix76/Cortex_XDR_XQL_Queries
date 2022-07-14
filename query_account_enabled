@@ -1,0 +1,12 @@
+preset = xdr_event_log 
+| filter action_evtlog_event_id = 4722
+| alter User_Name =arrayindex(regextract(action_evtlog_data_fields, "TargetUserName\":??\"([[:ascii:]]*?)\""),0)
+| alter Enabled_By =arrayindex(regextract(action_evtlog_data_fields, "SubjectUserName\":??\"([[:ascii:]]*?)\""),0)
+| alter Domain_Name =arrayindex(regextract(action_evtlog_data_fields, "TargetDomainName\":??\"([[:ascii:]]*?)\""),0)
+| alter Logon_Type =arrayindex(regextract(action_evtlog_data_fields, "LogonType\":??\"([[:ascii:]]*?)\""),0)
+| alter Failure_Reason =arrayindex(regextract(action_evtlog_data_fields, "FailureReason\":??\"([[:ascii:]]*?)\""),0) 
+| alter Source_IP =arrayindex(regextract(action_evtlog_data_fields, "IpAddress\":??\"([[:ascii:]]*?)\""),0)
+| alter Caller_Process_Name =arrayindex(regextract(action_evtlog_data_fields, "\"ProcessName\":??\"([[:ascii:]]*?)\""),0)
+| filter User_Name not contains  "$"
+| dedup _time ,User_Name,agent_hostname 
+| fields User_Name, agent_hostname ,Enabled_By, Domain_Name, Logon_Type,  Source_IP, Caller_Process_Name 
