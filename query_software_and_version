@@ -1,0 +1,8 @@
+config case_sensitive = false
+| dataset = host_inventory 
+| arrayexpand applications
+| alter app_name = json_extract(applications, "$.application_name")
+| alter app_version = replex(json_extract(applications , "$.raw_version"),"\"","")
+| filter app_name not contains "matrix42"
+| filter app_name contains "mozilla firefox" and app_version < "99.0.1"
+| fields app_name , host_name , app_version
